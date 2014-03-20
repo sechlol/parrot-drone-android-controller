@@ -60,7 +60,7 @@ public class HudViewController
 	private static final int TOP_BAR_ID = 5;
 	private static final int BOTTOM_BAR_ID = 6;
 	private static final int CAMERA_ID = 7;
-	private static final int RECORD_ID = 8;
+	private static final int TRACK_ID = 8;
 	private static final int PHOTO_ID = 9;
 	private static final int SETTINGS_ID = 10;
 	private static final int BATTERY_INDICATOR_ID = 11;
@@ -82,7 +82,7 @@ public class HudViewController
 	private Button btnCameraSwitch;
 	private Button btnPhoto;
 	private Button btnBack;
-	private ToggleButton btnRecord;
+	private Button btnTrack;
 	
 	private Button[] buttons;
 	
@@ -169,10 +169,8 @@ public class HudViewController
 		
 
 	    btnPhoto = new Button(res, R.drawable.btn_photo, R.drawable.btn_photo_pressed, Align.TOP_RIGHT);
-		btnRecord = new ToggleButton(res, R.drawable.btn_record, R.drawable.btn_record_pressed, 
-		                                    R.drawable.btn_record1, R.drawable.btn_record1_pressed,
-		                                    R.drawable.btn_record2, Align.TOP_RIGHT);
-		btnRecord.setMargin(0, res.getDimensionPixelOffset(R.dimen.hud_btn_rec_margin_right), 0, 0);
+	    btnTrack = new Button(res, R.drawable.btn_track, R.drawable.btn_track_pressed, Align.TOP_RIGHT);
+
 		
 		txtRecord = new Text(context, "REC", Align.TOP_RIGHT);
 		txtRecord.setMargin((int)res.getDimension(R.dimen.hud_rec_text_margin_top), (int)res.getDimension(R.dimen.hud_rec_text_margin_right), 0, 0);
@@ -226,7 +224,7 @@ public class HudViewController
 		buttons[2] = btnTakeOff;
 		buttons[3] = btnLand;
 		buttons[4] = btnPhoto;
-		buttons[5] = btnRecord;
+		buttons[5] = btnTrack;
 		buttons[6] = btnCameraSwitch;
 		buttons[7] = btnBack;
 		
@@ -243,7 +241,7 @@ public class HudViewController
 		renderer.addSprite(SETTINGS_ID, btnSettings);
 		renderer.addSprite(BACK_BTN_ID, btnBack);
 		renderer.addSprite(PHOTO_ID, btnPhoto);
-		renderer.addSprite(RECORD_ID, btnRecord);
+		renderer.addSprite(TRACK_ID, btnTrack);
 		renderer.addSprite(CAMERA_ID, btnCameraSwitch);
 		renderer.addSprite(ALERT_ID, btnEmergency);
 		renderer.addSprite(TAKE_OFF_ID, btnTakeOff);
@@ -491,17 +489,14 @@ public class HudViewController
 		btnCameraSwitch.setEnabled(enabled);
 	}
 	
-	
-	public void setRecordButtonEnabled(boolean enabled)
-	{
-		btnRecord.setEnabled(enabled);
-		txtRecord.setEnabled(enabled);
-	}
-	
-	
 	public void setCameraButtonEnabled(boolean enabled)
 	{
 		btnPhoto.setEnabled(enabled);
+	}
+	
+	public void setTrackButtonEnabled(boolean enabled)
+	{
+		btnTrack.setEnabled(enabled);
 	}
 	
 	
@@ -537,21 +532,6 @@ public class HudViewController
 		}
 	}
 	
-	
-	public void setRecording(boolean inProgress) 
-	{
-		btnRecord.setChecked(inProgress);
-
-		if (txtRecord != null) {
-			if (inProgress) {
-				txtRecord.setTextColor(Color.RED);
-			} else {
-				txtRecord.setTextColor(Color.WHITE);
-			}
-		}
-	}
-	
-	
 	public void setBtnTakeOffClickListener(OnClickListener listener)
 	{
 		this.btnTakeOff.setOnClickListener(listener);
@@ -570,12 +550,10 @@ public class HudViewController
 		this.btnPhoto.setOnClickListener(listener);
 	}
 	
-	
-	public void setBtnRecordClickListener(OnClickListener listener)
+	public void setBtnTrackClickListener(OnClickListener listener)
 	{
-		this.btnRecord.setOnClickListener(listener);
+		this.btnTrack.setOnClickListener(listener);
 	}
-
 	
 	public void setSettingsButtonClickListener(OnClickListener listener)
 	{

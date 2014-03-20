@@ -19,8 +19,8 @@ public class ControlButtons
     public final static String BUTTON_CAMERA = "camera";
     public final static String BUTTON_SETTINGS = "menu";
     public final static String BUTTON_SALTO = "salto";
-    public final static String BUTTON_RECORD = "record";
     public final static String BUTTON_PHOTO = "photo";
+    public final static String BUTTON_TRACK = "track";
     
     private Map<String,Integer> controls;
     
