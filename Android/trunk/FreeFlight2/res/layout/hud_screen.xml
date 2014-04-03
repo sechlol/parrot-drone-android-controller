@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.ControlDroneActivity" >
-
+    
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="match_parent"
@@ -93,6 +93,15 @@
         android:src="@drawable/btn_photo" />
 
     <ImageView
+        android:id="@+id/imageView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="@dimen/hud_btn_rec_margin_right"
+        android:src="@drawable/btn_record" />
+
+    <ImageView
         android:id="@+id/imageView9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -152,13 +161,13 @@
         android:layout_marginBottom="@dimen/hud_joy_margin"
         android:layout_marginRight="@dimen/hud_joy_margin"
         android:src="@drawable/joystick_halo" />
-    
-    <ImageView
-        android:id="@+id/imageView13"
+
+    <!-- Button
+        android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/btn_track" />
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:text="Start Tracking" /-->
 
 </RelativeLayout>

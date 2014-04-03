@@ -26,7 +26,7 @@ import android.widget.TextView;
 import com.parrot.freeflight.R;
 import com.parrot.freeflight.drone.NavData;
 import com.parrot.freeflight.gestures.EnhancedGestureDetector;
-import com.parrot.freeflight.ui.hud.Button;
+import com.parrot.freeflight.ui.hud.ButtonParrot;
 import com.parrot.freeflight.ui.hud.Image;
 import com.parrot.freeflight.ui.hud.Image.SizeParams;
 import com.parrot.freeflight.ui.hud.Indicator;
@@ -60,7 +60,7 @@ public class HudViewController
 	private static final int TOP_BAR_ID = 5;
 	private static final int BOTTOM_BAR_ID = 6;
 	private static final int CAMERA_ID = 7;
-	private static final int TRACK_ID = 8;
+	private static final int RECORD_ID = 8;
 	private static final int PHOTO_ID = 9;
 	private static final int SETTINGS_ID = 10;
 	private static final int BATTERY_INDICATOR_ID = 11;
@@ -75,16 +75,16 @@ public class HudViewController
 	
 	private Image bottomBarBg;
 	
-	private Button btnSettings;
-	private Button btnTakeOff;
-	private Button btnLand;
-	private Button btnEmergency;
-	private Button btnCameraSwitch;
-	private Button btnPhoto;
-	private Button btnBack;
-	private Button btnTrack;
+	private ButtonParrot btnSettings;
+	private ButtonParrot btnTakeOff;
+	private ButtonParrot btnLand;
+	private ButtonParrot btnEmergency;
+	private ButtonParrot btnCameraSwitch;
+	private ButtonParrot btnPhoto;
+	private ButtonParrot btnBack;
+	private ToggleButton btnRecord;
 	
-	private Button[] buttons;
+	private ButtonParrot[] buttons;
 	
 	private Indicator batteryIndicator;
 	private Indicator wifiIndicator;
@@ -148,15 +148,15 @@ public class HudViewController
 
 		Resources res = context.getResources();
 
-		btnSettings = new Button(res, R.drawable.btn_settings, R.drawable.btn_settings_pressed, Align.TOP_LEFT);
+		btnSettings = new ButtonParrot(res, R.drawable.btn_settings, R.drawable.btn_settings_pressed, Align.TOP_LEFT);
 		btnSettings.setMargin(0, 0, 0, (int)res.getDimension(R.dimen.hud_btn_settings_margin_left));
 		
-		btnBack = new Button(res, R.drawable.btn_back, R.drawable.btn_back_pressed, Align.TOP_LEFT);
+		btnBack = new ButtonParrot(res, R.drawable.btn_back, R.drawable.btn_back_pressed, Align.TOP_LEFT);
 		btnBack.setMargin(0, 0, 0, res.getDimensionPixelOffset(R.dimen.hud_btn_back_margin_left));
 		
-		btnEmergency = new Button(res, R.drawable.btn_emergency_normal, R.drawable.btn_emergency_pressed, Align.TOP_CENTER);
-		btnTakeOff = new Button(res, R.drawable.btn_take_off_normal, R.drawable.btn_take_off_pressed, Align.BOTTOM_CENTER);		
-		btnLand = new Button(res, R.drawable.btn_landing, R.drawable.btn_landing_pressed, Align.BOTTOM_CENTER);      
+		btnEmergency = new ButtonParrot(res, R.drawable.btn_emergency_normal, R.drawable.btn_emergency_pressed, Align.TOP_CENTER);
+		btnTakeOff = new ButtonParrot(res, R.drawable.btn_take_off_normal, R.drawable.btn_take_off_pressed, Align.BOTTOM_CENTER);		
+		btnLand = new ButtonParrot(res, R.drawable.btn_landing, R.drawable.btn_landing_pressed, Align.BOTTOM_CENTER);      
 		btnLand.setVisible(false);
 		
 		Image topBarBg = new Image(res, R.drawable.barre_haut, Align.TOP_CENTER);
@@ -168,11 +168,13 @@ public class HudViewController
 		bottomBarBg.setAlphaEnabled(false);
 		
 
-	    btnPhoto = new Button(res, R.drawable.btn_photo, R.drawable.btn_photo_pressed, Align.TOP_RIGHT);
-	    btnTrack = new Button(res, R.drawable.btn_track, R.drawable.btn_track_pressed, Align.TOP_RIGHT);
-
+	    btnPhoto = new ButtonParrot(res, R.drawable.btn_photo, R.drawable.btn_photo_pressed, Align.TOP_RIGHT);
+		btnRecord = new ToggleButton(res, R.drawable.btn_record, R.drawable.btn_record_pressed, 
+		                                    R.drawable.btn_record1, R.drawable.btn_record1_pressed,
+		                                    R.drawable.btn_record2, Align.TOP_RIGHT);
+		btnRecord.setMargin(0, res.getDimensionPixelOffset(R.dimen.hud_btn_rec_margin_right), 0, 0);
 		
-		txtRecord = new Text(context, "REC", Align.TOP_RIGHT);
+		txtRecord = new Text(context, "Start Tracking", Align.TOP_RIGHT);
 		txtRecord.setMargin((int)res.getDimension(R.dimen.hud_rec_text_margin_top), (int)res.getDimension(R.dimen.hud_rec_text_margin_right), 0, 0);
 		txtRecord.setTextColor(Color.WHITE);
 		txtRecord.setTypeface(TYPEFACE.Helvetica(context));
@@ -188,7 +190,7 @@ public class HudViewController
 		txtUsbRemaining.setTypeface(TYPEFACE.Helvetica(context));
 		txtUsbRemaining.setTextSize(res.getDimensionPixelSize(R.dimen.hud_usb_indicator_text_size));
 		
-		btnCameraSwitch = new Button(res, R.drawable.btn_camera, R.drawable.btn_camera_pressed, Align.TOP_RIGHT);
+		btnCameraSwitch = new ButtonParrot(res, R.drawable.btn_camera, R.drawable.btn_camera_pressed, Align.TOP_RIGHT);
 		btnCameraSwitch.setMargin(0, res.getDimensionPixelOffset(R.dimen.hud_btn_camera_switch_margin_right), 0, 0);
 		
 		int batteryIndicatorRes[] = {R.drawable.btn_battery_0,
@@ -218,13 +220,13 @@ public class HudViewController
 		wifiIndicator = new Indicator(res, wifiIndicatorRes, Align.TOP_LEFT);
 		wifiIndicator.setMargin(0, 0, 0, (int)res.getDimension(R.dimen.hud_wifi_indicator_margin_left));
 		
-		buttons = new Button[8];
+		buttons = new ButtonParrot[8];
 		buttons[0] = btnSettings;
 		buttons[1] = btnEmergency;
 		buttons[2] = btnTakeOff;
 		buttons[3] = btnLand;
 		buttons[4] = btnPhoto;
-		buttons[5] = btnTrack;
+		buttons[5] = btnRecord;
 		buttons[6] = btnCameraSwitch;
 		buttons[7] = btnBack;
 		
@@ -241,7 +243,7 @@ public class HudViewController
 		renderer.addSprite(SETTINGS_ID, btnSettings);
 		renderer.addSprite(BACK_BTN_ID, btnBack);
 		renderer.addSprite(PHOTO_ID, btnPhoto);
-		renderer.addSprite(TRACK_ID, btnTrack);
+		renderer.addSprite(RECORD_ID, btnRecord);
 		renderer.addSprite(CAMERA_ID, btnCameraSwitch);
 		renderer.addSprite(ALERT_ID, btnEmergency);
 		renderer.addSprite(TAKE_OFF_ID, btnTakeOff);
@@ -489,14 +491,17 @@ public class HudViewController
 		btnCameraSwitch.setEnabled(enabled);
 	}
 	
+	
+	public void setRecordButtonEnabled(boolean enabled)
+	{
+		btnRecord.setEnabled(enabled);
+		txtRecord.setEnabled(enabled);
+	}
+	
+	
 	public void setCameraButtonEnabled(boolean enabled)
 	{
 		btnPhoto.setEnabled(enabled);
-	}
-	
-	public void setTrackButtonEnabled(boolean enabled)
-	{
-		btnTrack.setEnabled(enabled);
 	}
 	
 	
@@ -532,6 +537,21 @@ public class HudViewController
 		}
 	}
 	
+	
+	public void setRecording(boolean inProgress) 
+	{
+		btnRecord.setChecked(inProgress);
+
+		if (txtRecord != null) {
+			if (inProgress) {
+				txtRecord.setTextColor(Color.RED);
+			} else {
+				txtRecord.setTextColor(Color.WHITE);
+			}
+		}
+	}
+	
+	
 	public void setBtnTakeOffClickListener(OnClickListener listener)
 	{
 		this.btnTakeOff.setOnClickListener(listener);
@@ -550,10 +570,12 @@ public class HudViewController
 		this.btnPhoto.setOnClickListener(listener);
 	}
 	
-	public void setBtnTrackClickListener(OnClickListener listener)
+	
+	public void setBtnRecordClickListener(OnClickListener listener)
 	{
-		this.btnTrack.setOnClickListener(listener);
+		this.btnRecord.setOnClickListener(listener);
 	}
+
 	
 	public void setSettingsButtonClickListener(OnClickListener listener)
 	{

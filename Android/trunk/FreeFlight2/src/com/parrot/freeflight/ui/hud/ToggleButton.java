@@ -7,7 +7,7 @@ import android.graphics.Canvas;
 
 import com.parrot.freeflight.ui.gl.GLSprite;
 
-public class ToggleButton extends Button
+public class ToggleButton extends ButtonParrot
 {
 	private boolean checked;
 	private float lightAlpha;

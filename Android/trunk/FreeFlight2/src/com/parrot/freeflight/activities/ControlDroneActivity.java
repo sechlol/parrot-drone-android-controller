@@ -35,6 +35,8 @@ import android.view.Surface;
 import android.view.View;
 import android.view.View.OnClickListener;
 
+import android.widget.Button;
+
 import com.parrot.freeflight.FreeFlightApplication;
 import com.parrot.freeflight.R;
 import com.parrot.freeflight.activities.base.ParrotActivity;
@@ -81,11 +83,13 @@ import com.parrot.freeflight.ui.hud.JoystickListener;
 import com.parrot.freeflight.utils.NookUtils;
 import com.parrot.freeflight.utils.SystemUtils;
 
+import android.app.AlertDialog;
+
 @SuppressLint("NewApi")
 public class ControlDroneActivity
         extends ParrotActivity
         implements DeviceOrientationChangeDelegate, WifiSignalStrengthReceiverDelegate, DroneVideoRecordStateReceiverDelegate, DroneEmergencyChangeReceiverDelegate,
-        DroneBatteryChangedReceiverDelegate, DroneFlyingStateReceiverDelegate, DroneCameraReadyActionReceiverDelegate, SettingsDialogDelegate
+        DroneBatteryChangedReceiverDelegate, DroneFlyingStateReceiverDelegate, DroneCameraReadyActionReceiverDelegate, DroneRecordReadyActionReceiverDelegate, SettingsDialogDelegate
 {
     private static final int LOW_DISK_SPACE_BYTES_LEFT = 1048576 * 20; //20 mebabytes
     private static final int WARNING_MESSAGE_DISMISS_TIME = 5000; // 5 seconds
@@ -118,8 +122,6 @@ public class ControlDroneActivity
     private DroneFlyingStateReceiver droneFlyingStateReceiver;
     private DroneCameraReadyChangeReceiver droneCameraReadyChangedReceiver;
     private DroneRecordReadyChangeReceiver droneRecordReadyChangeReceiver;
-    
-    // CREATE STATE RECEIVER FOR TRAKING
 
     private SoundPool soundPool;
     private int batterySoundId;
@@ -207,16 +209,28 @@ public class ControlDroneActivity
         acceleroEnabled = false;
         running = false;
 
-        initRegularJoystics();       
-
+        initRegularJoystics();
+        
+       
         view = new HudViewController(this, useSoftwareRendering);
 
+        /*this.setContentView(R.layout.tracking);
+        btnTrack = (Button)this.findViewById(R.id.track_button);
+        btnTrack.setOnClickListener(new OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            //finish();
+          }
+        });*/
+        
+        
         wifiSignalReceiver = new WifiSignalStrengthChangedReceiver(this);
         videoRecordingStateReceiver = new DroneVideoRecordingStateReceiver(this);
         droneEmergencyReceiver = new DroneEmergencyChangeReceiver(this);
         droneBatteryReceiver = new DroneBatteryChangedReceiver(this);
         droneFlyingStateReceiver = new DroneFlyingStateReceiver(this);
         droneCameraReadyChangedReceiver = new DroneCameraReadyChangeReceiver(this);
+        droneRecordReadyChangeReceiver = new DroneRecordReadyChangeReceiver(this);
 
         soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
         batterySoundId = soundPool.load(this, R.raw.battery, 1);
@@ -228,7 +242,7 @@ public class ControlDroneActivity
         settings.setFirstLaunch(false);
         
         view.setCameraButtonEnabled(false);
-        view.setTrackButtonEnabled(false);
+        view.setRecordButtonEnabled(false);
     }
     
     private void applyHandDependendTVControllers()
@@ -500,19 +514,20 @@ public class ControlDroneActivity
             {
             }
         });
-        
-        this.buttonControllers.add(new ButtonPressedController(buttons.getButtonCode(ControlButtons.BUTTON_TRACK))
-        {
-        	 @Override
-             public void onButtonReleased()
-             {
-                 // START TRACK
-             }
 
-             @Override
-             public void onButtonPressed()
-             {
-             }
+        this.buttonControllers.add(new ButtonPressedController(buttons.getButtonCode(ControlButtons.BUTTON_RECORD))
+        {
+
+            @Override
+            public void onButtonReleased()
+            {
+                onRecord();
+            }
+
+            @Override
+            public void onButtonPressed()
+            {
+            }
         });
     }
 
@@ -602,12 +617,13 @@ public class ControlDroneActivity
                 }
             }
         });
-        
-        view.setBtnTrackClickListener(new OnClickListener()
+
+        view.setBtnRecordClickListener(new OnClickListener()
         {
             public void onClick(View v)
             {
-                //START TRACKING HERE
+                //onRecord();
+            	prueba();
             }
         });
 
@@ -805,7 +821,7 @@ public class ControlDroneActivity
         runTranscoding();
         
         if (droneControlService.getMediaDir() != null) {
-            view.setTrackButtonEnabled(true);
+            view.setRecordButtonEnabled(true);
             view.setCameraButtonEnabled(true);
         }
     }
@@ -819,6 +835,17 @@ public class ControlDroneActivity
 
         updateBackButtonState();
     }
+
+    @SuppressLint("NewApi")
+    public void onDroneRecordReadyChanged(boolean ready)
+    {
+        if (!recording) {
+            view.setRecordButtonEnabled(ready);
+        } else {
+            view.setRecordButtonEnabled(true);
+        }
+    }
+
 
     protected void onNotifyLowDiskSpace()
     {
@@ -860,12 +887,12 @@ public class ControlDroneActivity
         controlLinkAvailable = (code != NavData.ERROR_STATE_NAVDATA_CONNECTION); 
         
         if (!controlLinkAvailable) {
+            view.setRecordButtonEnabled(false);
             view.setCameraButtonEnabled(false);
-            view.setTrackButtonEnabled(false);
             view.setSwitchCameraButtonEnabled(false);
         } else {
             view.setSwitchCameraButtonEnabled(true);
-            view.setTrackButtonEnabled(true);
+            view.setRecordButtonEnabled(true);
             view.setCameraButtonEnabled(true);
         }
         
@@ -893,6 +920,7 @@ public class ControlDroneActivity
         prevRecording = this.recording;
         this.recording = recording;
 
+        view.setRecording(recording);
         view.setUsbIndicatorEnabled(usbActive);
         view.setUsbRemainingTime(remaining);
 
@@ -1233,6 +1261,39 @@ public class ControlDroneActivity
         return lowOnSpace;
     }
 
+    private void onRecord()
+    {
+        if (droneControlService != null) {
+            DroneConfig droneConfig = droneControlService.getDroneConfig();
+            
+            boolean sdCardMounted = droneControlService.isMediaStorageAvailable();
+            boolean recordingToUsb = droneConfig.isRecordOnUsb() && droneControlService.isUSBInserted();
+
+            if (recording) {
+                // Allow to stop recording
+                view.setRecordButtonEnabled(false);
+                droneControlService.record();
+            } else {           
+                // Start recording
+                if (!sdCardMounted) {
+                    if (recordingToUsb) {
+                        view.setRecordButtonEnabled(false);
+                        droneControlService.record();
+                    } else {
+                        onNotifyNoMediaStorageAvailable();
+                    }
+                } else {
+                    if (!recordingToUsb && isLowOnDiskSpace()) {
+                        onNotifyLowDiskSpace();
+                    }
+                    
+                    view.setRecordButtonEnabled(false);
+                    droneControlService.record();
+                }      
+            }
+        }
+    }
+
     protected void onTakePhoto()
     {
         if (droneControlService.isMediaStorageAvailable()) {
@@ -1242,4 +1303,20 @@ public class ControlDroneActivity
            onNotifyNoMediaStorageAvailable();
         }
     }
+    
+    private void prueba() {
+    	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+		// set title
+		alertDialogBuilder.setTitle("Your Title");
+
+		// set dialog message
+		alertDialogBuilder.setMessage("Click yes to exit!");
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();
+    }  
 }

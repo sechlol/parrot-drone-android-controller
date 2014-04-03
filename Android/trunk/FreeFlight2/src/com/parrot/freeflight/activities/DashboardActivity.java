@@ -32,7 +32,9 @@ import com.parrot.freeflight.receivers.NetworkChangeReceiver;
 import com.parrot.freeflight.receivers.NetworkChangeReceiverDelegate;
 import com.parrot.freeflight.service.DroneControlService;
 import com.parrot.freeflight.service.intents.DroneStateManager;
+import com.parrot.freeflight.tasks.CheckAcademyAvailabilityTask;
 import com.parrot.freeflight.tasks.CheckDroneNetworkAvailabilityTask;
+import com.parrot.freeflight.tasks.CheckFirmwareTask;
 import com.parrot.freeflight.tasks.CheckMediaAvailabilityTask;
 import com.parrot.freeflight.transcodeservice.TranscodingService;
 import com.parrot.freeflight.utils.GPSHelper;
@@ -53,11 +55,14 @@ implements
 	private BroadcastReceiver mediaReadyReceiver;
     private BroadcastReceiver droneConnectionChangeReceiver;
     
+	private CheckAcademyAvailabilityTask checkAcademyAvailabilityTask;
 	private CheckMediaAvailabilityTask checkMediaTask;
+    private CheckFirmwareTask checkFirmwareTask;
     private CheckDroneNetworkAvailabilityTask checkDroneConnectionTask;
     
 	private boolean droneOnNetwork;
 	private EPhotoVideoState mediaState;
+	private boolean academyAvailable;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -147,6 +152,7 @@ implements
         if (mService != null) {
             checkMedia();
         }
+        checkAcademyAvailability();
         checkDroneConnectivity();
     }
     
@@ -155,6 +161,7 @@ implements
     {
         droneOnNetwork = false;
         mediaState = EPhotoVideoState.NO_SDCARD;
+        academyAvailable = false;
         
         requestUpdateButtonsState();
     }
@@ -173,7 +180,6 @@ implements
 
         return true;
     }
- 
     
     protected void onUSBStickRemoveDialogDismissed()
     {
@@ -205,6 +211,7 @@ implements
 
         if (mService != null && info.isConnected()) {
             checkDroneConnectivity();
+            checkAcademyAvailability();
         } else {         
             droneOnNetwork = false;
             requestUpdateButtonsState();
@@ -232,12 +239,16 @@ implements
             Log.d(TAG, "AR.Drone connection [CONNECTED]");
             this.droneOnNetwork = droneOnNetwork;
             
+            if (droneOnNetwork) {
+                // If we connected to the drone we are 100% sure that there is no internet connection
+                this.academyAvailable = false;
+            }
+            
             requestUpdateButtonsState();
         } else {
             Log.d(TAG, "AR.Drone connection [DISCONNECTED]");
         }
     }
-    
     
     @SuppressLint("NewApi")
     private void checkDroneConnectivity()
@@ -337,6 +348,30 @@ implements
         }
     }
     
+
+    @SuppressLint("NewApi")
+    private void checkAcademyAvailability()
+    {
+        if (!taskRunning(checkAcademyAvailabilityTask)) {
+            checkAcademyAvailabilityTask = new CheckAcademyAvailabilityTask()
+            {
+                @Override
+                protected void onPostExecute(Boolean result)
+                {
+                    academyAvailable = result;
+                    requestUpdateButtonsState();
+                }
+            };
+
+            if (Build.VERSION.SDK_INT >= 11) {
+                checkAcademyAvailabilityTask.executeOnExecutor(CheckAcademyAvailabilityTask.THREAD_POOL_EXECUTOR, this);
+            } else {
+                checkAcademyAvailabilityTask.execute(this);
+            }
+        }
+    }
+    
+    
     private boolean taskRunning(AsyncTask<?,?,?> checkMediaTask2)
     {
         if (checkMediaTask2 == null)
@@ -353,6 +388,14 @@ implements
     {
         if (taskRunning(checkMediaTask)) {
             checkMediaTask.cancel(true);
+        }
+        
+        if (taskRunning(checkAcademyAvailabilityTask)) {
+            checkAcademyAvailabilityTask.cancel(true);
+        }  
+        
+        if (taskRunning(checkFirmwareTask)) {
+            checkFirmwareTask.cancel(true);
         }
         
         if (taskRunning(checkDroneConnectionTask)) {
@@ -378,4 +421,5 @@ implements
         showAlertDialog(getString(R.string.Location_services_alert), getString(R.string.If_you_want_to_store_your_location_anc_access_your_media_enable_it),
           null);
     }
+
 }

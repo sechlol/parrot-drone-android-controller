@@ -5,4 +5,8 @@
         <ignore path="res/layout/guest_space_informations_page_share.xml" />
     </issue>
     <issue id="MissingTranslation" severity="ignore" />
+    <issue id="WrongCall">
+        <ignore path="src/com/parrot/freeflight/ui/hud/Button2.java" />
+        <ignore path="src/com/parrot/freeflight/ui/hud/ButtonParrot.java" />
+    </issue>
 </lint>

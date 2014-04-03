@@ -14,11 +14,15 @@ public class ControlButtonsFactory
         result.setUpControllButton(ControlButtons.BUTTON_ACCELEROMETR, KeyEvent.KEYCODE_MEDIA_PLAY);
         result.setUpControllButton(ControlButtons.BUTTON_CAMERA, KeyEvent.KEYCODE_PROG_YELLOW);
         result.setUpControllButton(ControlButtons.BUTTON_EMERGENCY, KeyEvent.KEYCODE_PROG_RED);
+//        result.setUpControllButton(ControlButtons.BUTTON_PITCH_LEFT, KeyEvent.KEYCODE_);
+//        result.setUpControllButton(ControlButtons.BUTTON_PITCH_RIGHT, KeyEvent.KEYCODE_);
+//        result.setUpControllButton(ControlButtons.BUTTON_ROLL_FORWARD, KeyEvent.KEYCODE_);
+//        result.setUpControllButton(ControlButtons.BUTTON_ROLL_BACKWARD, KeyEvent.KEYCODE_);
         result.setUpControllButton(ControlButtons.BUTTON_SALTO, KeyEvent.KEYCODE_DPAD_CENTER);
         result.setUpControllButton(ControlButtons.BUTTON_SETTINGS, KeyEvent.KEYCODE_MENU);
         result.setUpControllButton(ControlButtons.BUTTON_TAKE_OFF, KeyEvent.KEYCODE_PROG_BLUE);
+        result.setUpControllButton(ControlButtons.BUTTON_RECORD, KeyEvent.KEYCODE_MEDIA_PAUSE);
         result.setUpControllButton(ControlButtons.BUTTON_PHOTO, KeyEvent.KEYCODE_INFO);
-        result.setUpControllButton(ControlButtons.BUTTON_TRACK, KeyEvent.KEYCODE_PROG_GREEN);
         return result;
     }
     
@@ -32,11 +36,15 @@ public class ControlButtonsFactory
         result.setUpControllButton(ControlButtons.BUTTON_ACCELEROMETR, KeyEvent.KEYCODE_MEDIA_PLAY);
         result.setUpControllButton(ControlButtons.BUTTON_CAMERA, KeyEvent.KEYCODE_PROG_GREEN);
         result.setUpControllButton(ControlButtons.BUTTON_EMERGENCY, KeyEvent.KEYCODE_PROG_BLUE);
+//        result.setUpControllButton(ControlButtons.BUTTON_PITCH_LEFT, KeyEvent.KEYCODE_);
+//        result.setUpControllButton(ControlButtons.BUTTON_PITCH_RIGHT, KeyEvent.KEYCODE_);
+//        result.setUpControllButton(ControlButtons.BUTTON_ROLL_FORWARD, KeyEvent.KEYCODE_);
+//        result.setUpControllButton(ControlButtons.BUTTON_ROLL_BACKWARD, KeyEvent.KEYCODE_);
         result.setUpControllButton(ControlButtons.BUTTON_SALTO, KeyEvent.KEYCODE_DPAD_CENTER);
         result.setUpControllButton(ControlButtons.BUTTON_SETTINGS, KeyEvent.KEYCODE_MENU);
         result.setUpControllButton(ControlButtons.BUTTON_TAKE_OFF, KeyEvent.KEYCODE_PROG_RED);
+        result.setUpControllButton(ControlButtons.BUTTON_RECORD, KeyEvent.KEYCODE_MEDIA_PAUSE);
         result.setUpControllButton(ControlButtons.BUTTON_PHOTO, KeyEvent.KEYCODE_INFO);
-        result.setUpControllButton(ControlButtons.BUTTON_TRACK, KeyEvent.KEYCODE_PROG_YELLOW);
         return result;
     }
         

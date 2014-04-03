@@ -18,7 +18,7 @@ import android.view.View.OnClickListener;
 
 import com.parrot.freeflight.ui.gl.GLSprite;
 
-public class Button extends Sprite
+public class ButtonParrot extends Sprite
 {
 	protected GLSprite spriteNormal;
 	protected GLSprite spritePressed;
@@ -30,7 +30,7 @@ public class Button extends Sprite
 	private int pointerId; // Id of the pointer that has touched the control
 	
 	
-	public Button(Resources resources, int normalBitmapId, int pressedBitmapId, Align align) 
+	public ButtonParrot(Resources resources, int normalBitmapId, int pressedBitmapId, Align align) 
 	{
 		super(align);
 		

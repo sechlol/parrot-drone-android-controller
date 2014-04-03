@@ -118,6 +118,7 @@ MediaStorageReceiverDelegate
 
 		btnFreeFlight.setChecked(isFreeFlightEnabled());
 		btnPhotosVideos.setChecked(getPhotoVideoState().equals(EPhotoVideoState.READY));
+
 	}
 
 	
@@ -164,29 +165,16 @@ MediaStorageReceiverDelegate
 	{
 	    return EPhotoVideoState.NO_SDCARD;
 	}
-	
-	
-	@Deprecated
-	protected boolean isPhotoVideosEnabled()
-	{
-		return false;
-	}
-
-	protected boolean isARDroneUpdateEnabled()
-	{
-		return false;
-	}
 
 	protected boolean onStartFreeflight()
 	{
 		return false;
 	}
-
+	
 	protected boolean onStartPhotosVideos()
 	{
 		return false;
 	}
-
 
 	private void showErrorMessageForTime(View v, String string, int i)
 	{
