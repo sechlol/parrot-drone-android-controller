@@ -119,7 +119,9 @@ LocationListener
 
 	private ArrayList<String> mediaDownloaded;
 
-
+	// To know status of the drone for tracking
+	private boolean flying = false; // default is not flying
+	private boolean downCamara = false; // default is front camara
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -275,6 +277,13 @@ LocationListener
 	 */
 	public void triggerTakeOff() 
 	{
+		if (flying) {
+			// will land
+			flying = false;
+		} else {
+			// will take off
+			flying = true;
+		}
 		droneProxy.triggerTakeOff();
 	}
 
@@ -393,6 +402,11 @@ LocationListener
 	 */
 	public void switchCamera()
 	{
+		if (downCamara) {
+			downCamara = false; // will change to front camara
+		} else {
+			downCamara = true; // will change to down camara
+		}
 		droneProxy.switchCamera();
 	}
 
@@ -1050,5 +1064,13 @@ LocationListener
 	public boolean isUSBInserted()
 	{
 		return usbActive;
+	}
+	
+	public boolean isDownCamara() {
+		return downCamara;
+	}
+	
+	public boolean isFlying() {
+		return flying;
 	}
 }

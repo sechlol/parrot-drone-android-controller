@@ -36,7 +36,6 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 
 import com.parrot.freeflight.FreeFlightApplication;
 import com.parrot.freeflight.R;
@@ -84,6 +83,8 @@ import com.parrot.freeflight.ui.hud.JoystickListener;
 import com.parrot.freeflight.ui.hud.Text;
 import com.parrot.freeflight.utils.NookUtils;
 import com.parrot.freeflight.utils.SystemUtils;
+
+import com.parrot.freeflight.tracking.Tracking;
 
 @SuppressLint("NewApi")
 public class ControlDroneActivity
@@ -148,7 +149,10 @@ public class ControlDroneActivity
     private boolean rightJoyPressed;
     private boolean leftJoyPressed;
     private boolean isGoogleTV;
+    
     private boolean isTracking;
+    private Tracking tracking;
+    
 
     private List<ButtonController> buttonControllers;
 
@@ -1296,29 +1300,16 @@ public class ControlDroneActivity
     }
     
     private void startTrack() {
-    	// If the tracking is on, stop it.
-    	if(isTracking) {
-    		// Change message
-    		view.setSwitchCameraButtonEnabled(false);
-    		view.setTracking(false);
-    		isTracking = false;
-    		droneControlService.triggerTakeOff();
-    		droneControlService.switchCamera();
-    	} else { // Start the tracking
-    		// Change message
-    		view.setSwitchCameraButtonEnabled(false);
-    		view.setTracking(true);
+    	
+    	if(!isTracking) {
+    		tracking = new Tracking(droneControlService, view);
     		isTracking = true;
-    		droneControlService.switchCamera();
-    		droneControlService.triggerTakeOff();
-    		try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				droneControlService.triggerTakeOff();
-			}
-    		droneControlService.triggerTakeOff();
+    		tracking.start();
+    	} else {
+    		isTracking = false;
+    		tracking.stop();
     	}
+    		
+    	
     }  
 }
