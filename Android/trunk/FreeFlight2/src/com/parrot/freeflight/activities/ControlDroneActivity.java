@@ -17,6 +17,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.net.wifi.WifiManager;
@@ -34,7 +36,6 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.View.OnClickListener;
-
 import android.widget.Button;
 
 import com.parrot.freeflight.FreeFlightApplication;
@@ -80,10 +81,9 @@ import com.parrot.freeflight.ui.hud.AnalogueJoystick;
 import com.parrot.freeflight.ui.hud.JoystickBase;
 import com.parrot.freeflight.ui.hud.JoystickFactory;
 import com.parrot.freeflight.ui.hud.JoystickListener;
+import com.parrot.freeflight.ui.hud.Text;
 import com.parrot.freeflight.utils.NookUtils;
 import com.parrot.freeflight.utils.SystemUtils;
-
-import android.app.AlertDialog;
 
 @SuppressLint("NewApi")
 public class ControlDroneActivity
@@ -140,7 +140,7 @@ public class ControlDroneActivity
     private float pitchBase;
     private float rollBase;
     private boolean running;
-
+    
     private boolean flying;
     private boolean recording;
     private boolean cameraReady;
@@ -148,6 +148,7 @@ public class ControlDroneActivity
     private boolean rightJoyPressed;
     private boolean leftJoyPressed;
     private boolean isGoogleTV;
+    private boolean isTracking;
 
     private List<ButtonController> buttonControllers;
 
@@ -210,19 +211,8 @@ public class ControlDroneActivity
         running = false;
 
         initRegularJoystics();
-        
-       
+      
         view = new HudViewController(this, useSoftwareRendering);
-
-        /*this.setContentView(R.layout.tracking);
-        btnTrack = (Button)this.findViewById(R.id.track_button);
-        btnTrack.setOnClickListener(new OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            //finish();
-          }
-        });*/
-        
         
         wifiSignalReceiver = new WifiSignalStrengthChangedReceiver(this);
         videoRecordingStateReceiver = new DroneVideoRecordingStateReceiver(this);
@@ -243,6 +233,8 @@ public class ControlDroneActivity
         
         view.setCameraButtonEnabled(false);
         view.setRecordButtonEnabled(false);
+        
+        isTracking = false; 
     }
     
     private void applyHandDependendTVControllers()
@@ -618,12 +610,11 @@ public class ControlDroneActivity
             }
         });
 
-        view.setBtnRecordClickListener(new OnClickListener()
+        view.setBtnTrackClickListener(new OnClickListener()
         {
             public void onClick(View v)
             {
-                //onRecord();
-            	prueba();
+            	startTrack();
             }
         });
 
@@ -1304,19 +1295,30 @@ public class ControlDroneActivity
         }
     }
     
-    private void prueba() {
-    	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-		// set title
-		alertDialogBuilder.setTitle("Your Title");
-
-		// set dialog message
-		alertDialogBuilder.setMessage("Click yes to exit!");
-
-		// create alert dialog
-		AlertDialog alertDialog = alertDialogBuilder.create();
-
-		// show it
-		alertDialog.show();
+    private void startTrack() {
+    	// If the tracking is on, stop it.
+    	if(isTracking) {
+    		// Change message
+    		view.setSwitchCameraButtonEnabled(false);
+    		view.setTracking(false);
+    		isTracking = false;
+    		droneControlService.triggerTakeOff();
+    		droneControlService.switchCamera();
+    	} else { // Start the tracking
+    		// Change message
+    		view.setSwitchCameraButtonEnabled(false);
+    		view.setTracking(true);
+    		isTracking = true;
+    		droneControlService.switchCamera();
+    		droneControlService.triggerTakeOff();
+    		try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				droneControlService.triggerTakeOff();
+			}
+    		droneControlService.triggerTakeOff();
+    	}
     }  
 }

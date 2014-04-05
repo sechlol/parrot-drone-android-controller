@@ -82,7 +82,7 @@ public class HudViewController
 	private ButtonParrot btnCameraSwitch;
 	private ButtonParrot btnPhoto;
 	private ButtonParrot btnBack;
-	private ToggleButton btnRecord;
+	private ToggleButton btnTrack;
 	
 	private ButtonParrot[] buttons;
 	
@@ -94,7 +94,7 @@ public class HudViewController
 	
 	private Text txtBatteryStatus;
 	private Text txtAlert;
-	private Text txtRecord;
+	private Text txtTrack;
 	private Text txtUsbRemaining;
 	
 	private GLSurfaceView glView;
@@ -169,16 +169,17 @@ public class HudViewController
 		
 
 	    btnPhoto = new ButtonParrot(res, R.drawable.btn_photo, R.drawable.btn_photo_pressed, Align.TOP_RIGHT);
-		btnRecord = new ToggleButton(res, R.drawable.btn_record, R.drawable.btn_record_pressed, 
+	    
+		btnTrack = new ToggleButton(res, R.drawable.btn_record, R.drawable.btn_record_pressed, 
 		                                    R.drawable.btn_record1, R.drawable.btn_record1_pressed,
 		                                    R.drawable.btn_record2, Align.TOP_RIGHT);
-		btnRecord.setMargin(0, res.getDimensionPixelOffset(R.dimen.hud_btn_rec_margin_right), 0, 0);
+		btnTrack.setMargin(0, res.getDimensionPixelOffset(R.dimen.hud_btn_rec_margin_right), 0, 0);
 		
-		txtRecord = new Text(context, "Start Tracking", Align.TOP_RIGHT);
-		txtRecord.setMargin((int)res.getDimension(R.dimen.hud_rec_text_margin_top), (int)res.getDimension(R.dimen.hud_rec_text_margin_right), 0, 0);
-		txtRecord.setTextColor(Color.WHITE);
-		txtRecord.setTypeface(TYPEFACE.Helvetica(context));
-		txtRecord.setTextSize(res.getDimensionPixelSize(R.dimen.hud_rec_text_size));
+		txtTrack = new Text(context, "Start", Align.TOP_RIGHT);
+		txtTrack.setMargin((int)res.getDimension(R.dimen.hud_rec_text_margin_top), (int)res.getDimension(R.dimen.hud_rec_text_margin_right), 0, 0);
+		txtTrack.setTextColor(Color.WHITE);
+		txtTrack.setTypeface(TYPEFACE.Helvetica(context));
+		txtTrack.setTextSize(res.getDimensionPixelSize(R.dimen.hud_rec_text_size));
 		
 		usbIndicator = new Image(res, R.drawable.picto_usb_actif, Align.TOP_RIGHT);
 		usbIndicator.setMargin(0, res.getDimensionPixelOffset(R.dimen.hud_usb_indicator_margin_right), 0, 0);
@@ -226,7 +227,7 @@ public class HudViewController
 		buttons[2] = btnTakeOff;
 		buttons[3] = btnLand;
 		buttons[4] = btnPhoto;
-		buttons[5] = btnRecord;
+		buttons[5] = btnTrack;
 		buttons[6] = btnCameraSwitch;
 		buttons[7] = btnBack;
 		
@@ -243,7 +244,7 @@ public class HudViewController
 		renderer.addSprite(SETTINGS_ID, btnSettings);
 		renderer.addSprite(BACK_BTN_ID, btnBack);
 		renderer.addSprite(PHOTO_ID, btnPhoto);
-		renderer.addSprite(RECORD_ID, btnRecord);
+		renderer.addSprite(RECORD_ID, btnTrack);
 		renderer.addSprite(CAMERA_ID, btnCameraSwitch);
 		renderer.addSprite(ALERT_ID, btnEmergency);
 		renderer.addSprite(TAKE_OFF_ID, btnTakeOff);
@@ -252,7 +253,7 @@ public class HudViewController
 		renderer.addSprite(WIFI_INDICATOR_ID, wifiIndicator);
 		renderer.addSprite(EMERGENCY_LABEL_ID, txtAlert);
 		renderer.addSprite(BATTERY_STATUS_LABEL_ID, txtBatteryStatus);
-		renderer.addSprite(RECORD_LABEL_ID, txtRecord);
+		renderer.addSprite(RECORD_LABEL_ID, txtTrack);
 		renderer.addSprite(USB_INDICATOR_ID, usbIndicator);
 		renderer.addSprite(USB_INDICATOR_TEXT_ID, txtUsbRemaining);
 	}
@@ -488,14 +489,14 @@ public class HudViewController
 	
 	public void setSwitchCameraButtonEnabled(boolean enabled)
 	{
-		btnCameraSwitch.setEnabled(enabled);
+		btnCameraSwitch.setEnabled(enabled); //don't allow switch camera so always look down
 	}
 	
 	
 	public void setRecordButtonEnabled(boolean enabled)
 	{
-		btnRecord.setEnabled(enabled);
-		txtRecord.setEnabled(enabled);
+		btnTrack.setEnabled(enabled);
+		txtTrack.setEnabled(enabled);
 	}
 	
 	
@@ -540,13 +541,13 @@ public class HudViewController
 	
 	public void setRecording(boolean inProgress) 
 	{
-		btnRecord.setChecked(inProgress);
+		btnTrack.setChecked(inProgress);
 
-		if (txtRecord != null) {
+		if (txtTrack != null) {
 			if (inProgress) {
-				txtRecord.setTextColor(Color.RED);
+				txtTrack.setTextColor(Color.RED);
 			} else {
-				txtRecord.setTextColor(Color.WHITE);
+				txtTrack.setTextColor(Color.WHITE);
 			}
 		}
 	}
@@ -571,9 +572,9 @@ public class HudViewController
 	}
 	
 	
-	public void setBtnRecordClickListener(OnClickListener listener)
+	public void setBtnTrackClickListener(OnClickListener listener)
 	{
-		this.btnRecord.setOnClickListener(listener);
+		this.btnTrack.setOnClickListener(listener);
 	}
 
 	
@@ -643,16 +644,6 @@ public class HudViewController
 				}
 			}
 		}
-		
-			
-//		if (event.getAction() == MotionEvent.ACTION_MOVE) {
-//		    // Trying to avoid flooding of ACTION_MOVE events
-//			try {
-//				Thread.sleep(33);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//		}
 		
 		return result;
 	}
@@ -729,4 +720,19 @@ public class HudViewController
     {
         btnEmergency.setEnabled(enabled);
     }
+    
+    public void setTracking(boolean inProgress) 
+	{
+		btnTrack.setChecked(inProgress);
+
+		if (txtTrack != null) {
+			if (inProgress) {
+				txtTrack.setText("  Stop");
+				txtTrack.setTextColor(Color.RED);
+			} else {
+				txtTrack.setText("  Start");
+				txtTrack.setTextColor(Color.WHITE);
+			}
+		}
+	}
 }
