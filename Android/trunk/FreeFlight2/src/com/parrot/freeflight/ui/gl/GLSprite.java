@@ -7,10 +7,15 @@
 
 package com.parrot.freeflight.ui.gl;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -23,9 +28,11 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.opengl.GLES20;
+import android.opengl.GLException;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.os.Build;
+import android.os.Environment;
 import android.util.Log;
 
 import com.parrot.freeflight.utils.TextureUtils;
@@ -261,6 +268,7 @@ public class GLSprite
             vertices = createVertex(width, height);
             updateVertexBuffer = true;
         }
+        
     }
 
 
@@ -280,9 +288,13 @@ public class GLSprite
         recalculateMatrix = true;
     }
 
+    
+    
     @SuppressLint("NewApi")
     public void onDraw(GL10 gl, float x, float y)
     {
+//    	
+
         if (!readyToDraw)
             return;
 
@@ -345,6 +357,7 @@ public class GLSprite
 
     public void onDraw(Canvas canvas, float x, float y)
     {
+  
         currPaint.setAlpha((int) (alpha * 255.0f));
         dstRect.set(srcRect);
         dstRect.offset((int) x, (int) y);
@@ -367,6 +380,7 @@ public class GLSprite
 
     public void updateTexture(Resources res, Bitmap bitmap)
     {
+    
         if (this.texture != null) {
             this.texture.recycle();
         }

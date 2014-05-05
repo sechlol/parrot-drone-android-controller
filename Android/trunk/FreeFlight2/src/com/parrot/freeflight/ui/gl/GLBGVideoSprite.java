@@ -1,11 +1,20 @@
 package com.parrot.freeflight.ui.gl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.opengl.GLES20;
+import android.os.Environment;
+import android.util.Log;
 
 public class GLBGVideoSprite extends GLSprite 
 {
@@ -29,18 +38,23 @@ public class GLBGVideoSprite extends GLSprite
 	private int x;
 	private int y;
 	
+	private int count = 0;
+	
 	
 	public GLBGVideoSprite(Resources resources) 
 	{
+		
 		super(resources, null);
 		videoFrameLock = new Object();
 		video = Bitmap.createBitmap(512, 512, Bitmap.Config.RGB_565);
+
 	}
 	
 
 	@Override
 	protected void onUpdateTexture()
 	{
+		
 		if (onUpdateVideoTextureNative(program, textures[0]) && (prevImgWidth != imageWidth || prevImgHeight != imageHeight)) {
 		    if (!isVideoReady) {
 		        isVideoReady = true;
@@ -55,12 +69,15 @@ public class GLBGVideoSprite extends GLSprite
 			prevImgWidth = imageWidth;
 			prevImgHeight = imageHeight;
 		}
+		
+		
 	}
 	
 
 	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height)
 	{
+
 		this.screenWidth = width;
 		this.screenHeight = height;
 		
@@ -75,7 +92,8 @@ public class GLBGVideoSprite extends GLSprite
 	{   if (!isVideoReady) {
 	        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 	    }
-	    
+
+
 		super.onDraw(gl, this.x, this.y);
 	}
 
@@ -88,11 +106,13 @@ public class GLBGVideoSprite extends GLSprite
 		} else {
 			canvas.drawBitmap(video, matrix, null);
 		}
+
 	}
 
 	public boolean updateVideoFrame() 
 	{
 		boolean success = false;
+		
 		
 		synchronized (videoFrameLock) {
 			
@@ -122,6 +142,7 @@ public class GLBGVideoSprite extends GLSprite
 						matrix.setScale((float)screenHeight / (float)videoHeight, (float)screenHeight / (float)videoHeight);
 					}
 				}
+			
 				
 				isVideoReady = true;
 				success = true;

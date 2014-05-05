@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.parrot.freeflight.R;
 import com.parrot.freeflight.drone.NavData;
 import com.parrot.freeflight.gestures.EnhancedGestureDetector;
+import com.parrot.freeflight.tracking.VideoStageGrabber;
 import com.parrot.freeflight.ui.hud.ButtonParrot;
 import com.parrot.freeflight.ui.hud.Image;
 import com.parrot.freeflight.ui.hud.Image.SizeParams;
@@ -128,7 +129,7 @@ public class HudViewController
 		
 		context.setContentView(glView);
 		
-		renderer = new VideoStageRenderer(context, null);
+		renderer = new VideoStageGrabber(context, null);
 		
 		if (useSoftwareRendering){
 			// Replacing OpneGl based view with Canvas based one
@@ -719,6 +720,10 @@ public class HudViewController
     public void setEmergencyButtonEnabled(boolean enabled)
     {
         btnEmergency.setEnabled(enabled);
+    }
+    
+    public VideoStageRenderer getRenderer(){
+    	return renderer;
     }
     
     public void setTracking(boolean inProgress) 

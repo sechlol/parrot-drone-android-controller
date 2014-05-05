@@ -7,6 +7,14 @@
 
 package com.parrot.freeflight.video;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
@@ -14,17 +22,21 @@ import java.util.Map;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.opengl.GLES20;
+import android.opengl.GLException;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.Matrix;
+import android.os.Environment;
 import android.util.Log;
 
 import com.parrot.freeflight.ui.gl.GLBGVideoSprite;
 import com.parrot.freeflight.ui.hud.Sprite;
 
+@SuppressLint("WrongCall")
 public class VideoStageRenderer implements Renderer {
 
 	private GLBGVideoSprite bgSprite;
@@ -34,8 +46,8 @@ public class VideoStageRenderer implements Renderer {
 	
 	private float fps;
 	
-	private int screenWidth;
-	private int screenHeight;
+	protected int screenWidth;
+	protected int screenHeight;
 	
 	//**********************
     private float[] mVMatrix = new float[16];
@@ -68,6 +80,8 @@ public class VideoStageRenderer implements Renderer {
     private long startTime;
 
     private long endTime;
+    
+    private int count = 0;
 	
 	//***********************
 	
@@ -79,6 +93,7 @@ public class VideoStageRenderer implements Renderer {
 		
 		idSpriteMap = new Hashtable<Integer, Sprite>();
 		sprites = new ArrayList<Sprite>(4);
+		Log.i("video","VideoStageRenderer");
 	}
 	
 	
@@ -90,6 +105,7 @@ public class VideoStageRenderer implements Renderer {
 				sprites.add(sprite);
 			}
 		}
+		
 	}
 	
 	
@@ -109,11 +125,13 @@ public class VideoStageRenderer implements Renderer {
 				idSpriteMap.remove(id);
 			}
 		}
+	
 	}
 	
 	
 	public void onDrawFrame(Canvas canvas)
 	{
+		
 		bgSprite.onDraw(canvas, 0, 0);
 
 		synchronized (sprites) {
@@ -137,6 +155,7 @@ public class VideoStageRenderer implements Renderer {
 	
 	public void onDrawFrame(GL10 gl) 
 	{
+
 	    // Limiting framerate in order to save some CPU time
 	    endTime = System.currentTimeMillis();
 	    long dt = endTime - startTime;
@@ -165,14 +184,21 @@ public class VideoStageRenderer implements Renderer {
     				}
     
     				sprite.draw(gl);
+    				
+    				
     			}
     		}
 		}
+		
 	}
-
+	
+	
+	
+	
 	
 	public void onSurfaceChanged(GL10 gl, int width, int height) 
 	{
+		
 		screenWidth = width;
 		screenHeight = height;
 
@@ -198,6 +224,7 @@ public class VideoStageRenderer implements Renderer {
 	
 	public void onSurfaceChanged (Canvas canvas, int width, int height)
 	{	
+
 		screenWidth = width;
 		screenHeight = height;
 		
@@ -207,6 +234,7 @@ public class VideoStageRenderer implements Renderer {
 	
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) 
 	{
+
 	    startTime = System.currentTimeMillis();
 	    
 		GLES20.glEnable(GLES20.GL_BLEND);
@@ -242,12 +270,14 @@ public class VideoStageRenderer implements Renderer {
 	
 	public boolean updateVideoFrame() 
 	{
+
 		return bgSprite.updateVideoFrame();
 	}
 	
 	
 	private int loadShader(int type, String code)
 	{
+
 		int shader = GLES20.glCreateShader(type);
 		GLES20.glShaderSource(shader, code);		
 		GLES20.glCompileShader(shader);
@@ -267,6 +297,7 @@ public class VideoStageRenderer implements Renderer {
 
     public void clearSprites()
     {
+
         synchronized (sprites) {
             for (int i=0; i<sprites.size(); ++i) {
                 Sprite sprite = sprites.get(i);

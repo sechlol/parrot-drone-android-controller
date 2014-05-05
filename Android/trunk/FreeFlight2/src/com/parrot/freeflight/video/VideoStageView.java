@@ -1,12 +1,15 @@
 package com.parrot.freeflight.video;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+@SuppressLint("WrongCall")
 public class VideoStageView extends SurfaceView 
 implements 
 	SurfaceHolder.Callback
@@ -32,7 +35,8 @@ implements
 	
 	public VideoStageView(Context context) {
 		super(context);	
-	
+		
+		Log.i("video","VideoStageView");
 		getHolder().addCallback(this);
 		
 		 fpsPaint.setTextSize(30);
@@ -42,6 +46,7 @@ implements
 	@Override
 	protected void onDraw(Canvas canvas) 
 	{
+		Log.i("video","VideoStageView ondraw");
 		if (renderer != null) {
 			renderer.onDrawFrame(canvas);
 		}
@@ -65,7 +70,7 @@ implements
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) 
 	{
 		super.onSizeChanged(w, h, oldw, oldh);
-		
+		Log.i("video","VideoStageView onsizechange");
 		width = w;
 		height = h;
 		
@@ -78,7 +83,7 @@ implements
 	public void setRenderer(VideoStageRenderer renderer)
 	{
 		this.renderer = renderer;
-		
+		Log.i("video","VideoStageView setrenderer");
 		if (width != 0 && height != 0) {
 			renderer.onSurfaceChanged((Canvas)null, width, height);
 		}
@@ -88,11 +93,13 @@ implements
 	public void onStart()
 	{
 		onStop();
+		Log.i("video","VideoStageView onstart");
 	}
 	
 	
 	public void onStop()
 	{
+		Log.i("video","VideoStageView onstop");
 		if (invalidateThread != null) {
 		}
 	}
@@ -100,7 +107,8 @@ implements
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) 
 	{
-		renderer.onSurfaceChanged((Canvas)null, getWidth(), getHeight());		
+		renderer.onSurfaceChanged((Canvas)null, getWidth(), getHeight());	
+		Log.i("video","VideoStageView surfacechange");
 	}
 
 	public void surfaceCreated(SurfaceHolder holder) 
@@ -108,6 +116,7 @@ implements
        invalidateThread = new DrawThread(getHolder(), this);
        invalidateThread.setRunning(true);
        invalidateThread.start();
+       Log.i("video","VideoStageView surfcreated");
 	}
 
 	public void surfaceDestroyed(SurfaceHolder holder) 
@@ -122,6 +131,7 @@ implements
 
 	            }
 	        }
+	        Log.i("video","VideoStageView surfdestr");
 	}
 	
     class DrawThread extends Thread {
@@ -132,6 +142,7 @@ implements
         public DrawThread(SurfaceHolder surfaceHolder, VideoStageView gameView) {
             this.surfaceHolder = surfaceHolder;
             this.view = gameView;
+            Log.i("video","VideoStageView drawthread");
         }
 
         public void setRunning(boolean run) {
@@ -146,6 +157,7 @@ implements
         public void run() {
             Canvas c;
             while (run) {
+            	Log.i("video","VideoStageView drawthread run");
                 c = null;
 
                 //limit frame rate to max 60fps

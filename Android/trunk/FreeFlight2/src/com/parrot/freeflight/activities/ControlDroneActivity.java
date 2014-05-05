@@ -36,6 +36,7 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 
 import com.parrot.freeflight.FreeFlightApplication;
 import com.parrot.freeflight.R;
@@ -83,7 +84,6 @@ import com.parrot.freeflight.ui.hud.JoystickListener;
 import com.parrot.freeflight.ui.hud.Text;
 import com.parrot.freeflight.utils.NookUtils;
 import com.parrot.freeflight.utils.SystemUtils;
-
 import com.parrot.freeflight.tracking.Tracking;
 
 @SuppressLint("NewApi")
@@ -152,6 +152,7 @@ public class ControlDroneActivity
     
     private boolean isTracking;
     private Tracking tracking;
+    private Button trackBtn;
     
 
     private List<ButtonController> buttonControllers;
@@ -239,6 +240,7 @@ public class ControlDroneActivity
         view.setRecordButtonEnabled(false);
         
         isTracking = false; 
+       // trackBtn = (Button)
     }
     
     private void applyHandDependendTVControllers()
