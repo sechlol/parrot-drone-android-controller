@@ -105,6 +105,7 @@ public abstract class ImageProcessor {
 
 
 	public void Process(Bitmap bmap){
+
 		height = bmap.getHeight();
 		width = bmap.getWidth();
 		
@@ -144,8 +145,22 @@ public abstract class ImageProcessor {
 //        Log.i(TAG, "Dir x and y: (" + result1 + ", " + result2 + ")");
 	}
 	
-	private void CalculateDirection(){
-		
+	private void CalculateDirection(int posX, int posY){
+		if(Math.abs(posX) > 200 || Math.abs(posY) > 200){
+			if(Math.abs(posX) > Math.abs(posY)){
+				if(posX > 0){
+					// Go right
+				} else {
+					// Go left
+				}
+			} else {
+				if(posY > 0){
+					//Go up
+				} else {
+					//Go down
+				}
+			}
+		}
 	}
 	
     private void calculateMoments(Moments imgMoments){
