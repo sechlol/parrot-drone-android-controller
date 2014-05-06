@@ -11,6 +11,11 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Core;
+
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
@@ -92,6 +97,8 @@ public class ControlDroneActivity
         implements DeviceOrientationChangeDelegate, WifiSignalStrengthReceiverDelegate, DroneVideoRecordStateReceiverDelegate, DroneEmergencyChangeReceiverDelegate,
         DroneBatteryChangedReceiverDelegate, DroneFlyingStateReceiverDelegate, DroneCameraReadyActionReceiverDelegate, DroneRecordReadyActionReceiverDelegate, SettingsDialogDelegate
 {
+	
+	
     private static final int LOW_DISK_SPACE_BYTES_LEFT = 1048576 * 20; //20 mebabytes
     private static final int WARNING_MESSAGE_DISMISS_TIME = 5000; // 5 seconds
     
@@ -152,7 +159,6 @@ public class ControlDroneActivity
     
     private boolean isTracking;
     private Tracking tracking;
-    private Button trackBtn;
     
 
     private List<ButtonController> buttonControllers;
@@ -240,8 +246,30 @@ public class ControlDroneActivity
         view.setRecordButtonEnabled(false);
         
         isTracking = false; 
-       // trackBtn = (Button)
+        
+        Log.i("track", "Trying to load OpenCV library");
+        if (!OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_8, this, mOpenCVCallBack))
+        {
+          Log.e("track", "Cannot connect to OpenCV Manager");
+        }
+        else{ Log.i("track", "opencv successfull"); }
     }
+    
+    private BaseLoaderCallback mOpenCVCallBack = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+          switch (status) {
+              case LoaderCallbackInterface.SUCCESS:
+              {
+                 Log.i("track", "OpenCV loaded successfully");
+              } break;
+              default:
+              {
+                  super.onManagerConnected(status);
+              } break;
+            }
+         }
+    };
     
     private void applyHandDependendTVControllers()
     {

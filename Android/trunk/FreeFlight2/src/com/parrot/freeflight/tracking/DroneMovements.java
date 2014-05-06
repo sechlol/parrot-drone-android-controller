@@ -1,5 +1,6 @@
 package com.parrot.freeflight.tracking;
 
+import android.util.Log;
 import android.util.Pair;
 
 import com.parrot.freeflight.service.DroneControlService;
@@ -150,11 +151,13 @@ public class DroneMovements {
 	}
 	
 	public void moveRight() {
-		droneControlService.moveRight(power);
+		Log.i("track","right");
+		//droneControlService.moveRight(power);
 	}
 	
 	public void moveLeft() {
-		droneControlService.moveLeft(power);
+		Log.i("track","left");
+		//droneControlService.moveLeft(power);
 	}
 	
 	public void turnRight() {
@@ -174,11 +177,13 @@ public class DroneMovements {
 	}
 	
 	public void moveUp() {
-		droneControlService.moveUp(power);
+		Log.i("track","up");
+		//droneControlService.moveUp(power);
 	}
 	
 	public void moveDown() {
-		droneControlService.moveDown(power);
+		Log.i("track","down");
+		//droneControlService.moveDown(power);
 	}
 	
 	public void takePhoto() {

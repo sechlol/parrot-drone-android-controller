@@ -2,6 +2,10 @@ package com.parrot.freeflight.activities;
 
 import java.io.File;
 
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -64,6 +68,26 @@ implements
 	private EPhotoVideoState mediaState;
 	private boolean academyAvailable;
 	
+	private BaseLoaderCallback mOpenCVCallBack = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+          switch (status) {
+              case LoaderCallbackInterface.SUCCESS:
+              {
+                 Log.i("track", "OpenCV loaded successfully");
+                
+
+              } break;
+
+
+              default:
+              {
+                  super.onManagerConnected(status);
+              } break;
+            }
+         }
+    };
+    
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -73,6 +97,13 @@ implements
             return;
         }
         
+        Log.i("track", "Trying to load OpenCV library");
+        if (!OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_8, this, mOpenCVCallBack))
+        {
+          Log.e("track", "Cannot connect to OpenCV Manager");
+        }
+        else{ Log.i("track", "opencv successfull"); }
+        
         mediaState = EPhotoVideoState.UNKNOWN;
         initBroadcastReceivers();
         
@@ -81,6 +112,7 @@ implements
           if (GPSHelper.deviceSupportGPS(this) && !GPSHelper.isGpsOn(this)) {
               onNotifyAboutGPSDisabled();
         }
+          
     }
    
 

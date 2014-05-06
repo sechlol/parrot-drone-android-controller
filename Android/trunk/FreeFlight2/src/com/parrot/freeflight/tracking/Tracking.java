@@ -1,13 +1,13 @@
 package com.parrot.freeflight.tracking;
 
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Environment;
 import android.util.Log;
 
 import com.parrot.freeflight.service.DroneControlService;
@@ -25,7 +25,11 @@ public class Tracking {
 	public Tracking(DroneControlService droneControlService, HudViewController hud) {
 		view = hud;
 		drone = new DroneMovements(droneControlService);
-		processor = new ImageProcessor(Color.RED){
+		
+		double[] color1 = new double[]{120,120,50};//Color.argb(1, 120,120,50);
+		double[] color2 = new double[]{180,255,255};//Color.argb(1, 180,256,256);
+		
+		processor = new ImageProcessor(color1,color2){
 			public void OnTargetMoveLeft() {drone.moveLeft();}
 			public void OnTargetMoveRight() {drone.moveRight();}
 			public void OnTargetMoveUp() {drone.moveUp();}
@@ -33,26 +37,57 @@ public class Tracking {
 			public void OnTargetMoveFar() {drone.moveForward();}
 			public void OnTargetMoveClose() {drone.moveBackward();}
 		};
-		
 	}
 	
 	public void start() {
-		
-		view.setSwitchCameraButtonEnabled(false); // disable switching camera button
-		view.setTracking(true); // Change the message of screen to stop
-		grabber = (VideoStageGrabber) view.getRenderer();
-
-		grabber.startGrabbing(10, new OnFrameCallback(){public void onFrame(Bitmap bmap) {
-			processor.Process(bmap);
-		}});
-		
-		isActive = true;
+		if(!isActive){
+			
+			view.setSwitchCameraButtonEnabled(false); // disable switching camera button
+			view.setTracking(true); // Change the message of screen to stop
+			grabber = (VideoStageGrabber) view.getRenderer();
+	
+			grabber.startGrabbing(15, new OnFrameCallback(){public void onFrame(Bitmap bmap) {
+				processor.Process(bmap);
+			}});
+			
+			/*grabber.startGrabbing(1, new OnFrameCallback(){public void onFrame(Bitmap bmap) {
+				savePicture(bmap);
+			}});*/
+			
+			isActive = true;
+		}
 	}
 	 
 	public void stop() {
-		isActive = false;
-		grabber.stopGrabbing();
-		view.setSwitchCameraButtonEnabled(true); // enable switching camera button
-		view.setTracking(false); // Change the message of screen to start
+		if(isActive){
+			
+			isActive = false;
+			grabber.stopGrabbing();
+			view.setSwitchCameraButtonEnabled(true); // enable switching camera button
+			view.setTracking(false); // Change the message of screen to start
+		}
+	}
+	
+	private int count = 0;
+	private void savePicture(Bitmap map){
+		try {
+			count++;
+			String s= Environment.getExternalStorageDirectory().getPath()+"/DCIM/AR.Drone/lol"+count+".jpg";
+			File file = new File(s);
+		    FileOutputStream fOut = new FileOutputStream(file);
+		  
+		    if(map != null){
+			    map.compress(Bitmap.CompressFormat.JPEG, 50, fOut);
+			    fOut.flush();
+			    fOut.close();
+	            //Log.i("video","written "+s);
+		    }
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
