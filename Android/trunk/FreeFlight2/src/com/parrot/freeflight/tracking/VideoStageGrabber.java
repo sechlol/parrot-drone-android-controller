@@ -17,7 +17,7 @@ public class VideoStageGrabber extends VideoStageRenderer {
 	private OnFrameCallback callback = null;
 	private boolean isGrabbing = false;
 	private int fps; 
-	private double ratio = 0.5;
+	private double ratio = 0.7;
 	private long lastScreen = 0;
 	private Thread thread;
 	
@@ -31,7 +31,6 @@ public class VideoStageGrabber extends VideoStageRenderer {
 	}
 	
 	public void startGrabbing(int fps, OnFrameCallback call){
-	
 		isGrabbing = true;
 		callback = call;
 		this.fps = fps;
@@ -39,7 +38,6 @@ public class VideoStageGrabber extends VideoStageRenderer {
 	
 	public void stopGrabbing() {
 		isGrabbing = false;
-
 	}
 
 	public void onDrawFrame(GL10 gl){
@@ -68,12 +66,12 @@ public class VideoStageGrabber extends VideoStageRenderer {
 					    {
 					    	Bitmap map = createBitmapFromGLSurface2(x,y,w,h,bb);
 						    callback.onFrame(map);
-						    
 					    }
 					};
 					thread.start();
+					Log.i("video","FPS: "+(1000/(System.currentTimeMillis()-lastScreen)+" expected: "+fps));
 				}
-				//Log.i("video", "Video grabbed "+(now-lastScreen)+" "+((int)(1000/fps))+" executing: "+thread.isAlive());
+				
 				
 			    lastScreen = System.currentTimeMillis();
 			}

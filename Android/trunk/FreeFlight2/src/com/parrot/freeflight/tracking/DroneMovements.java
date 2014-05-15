@@ -152,19 +152,21 @@ public class DroneMovements {
 	
 	public void moveRight() {
 		Log.i("track","right");
-		//droneControlService.moveRight(power);
+		droneControlService.moveRight(power);
 	}
 	
 	public void moveLeft() {
 		Log.i("track","left");
-		//droneControlService.moveLeft(power);
+		droneControlService.moveLeft(power);
 	}
 	
 	public void turnRight() {
+		Log.i("track","right");
 		droneControlService.turnRight(power);
 	}
 	
 	public void turnLeft() {
+		Log.i("track","left");
 		droneControlService.turnLeft(power);
 	}
 	
@@ -178,12 +180,12 @@ public class DroneMovements {
 	
 	public void moveUp() {
 		Log.i("track","up");
-		//droneControlService.moveUp(power);
+		droneControlService.moveUp(power);
 	}
 	
 	public void moveDown() {
 		Log.i("track","down");
-		//droneControlService.moveDown(power);
+		droneControlService.moveDown(power);
 	}
 	
 	public void takePhoto() {

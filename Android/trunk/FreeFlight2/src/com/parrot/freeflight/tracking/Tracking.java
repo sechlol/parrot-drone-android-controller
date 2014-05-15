@@ -30,8 +30,8 @@ public class Tracking {
 		double[] color2 = new double[]{180,255,255};//Color.argb(1, 180,256,256);
 		
 		processor = new ImageProcessor(color1,color2){
-			public void OnTargetMoveLeft() {drone.moveLeft();}
-			public void OnTargetMoveRight() {drone.moveRight();}
+			public void OnTargetMoveLeft() {/*drone.turnLeft();*/}
+			public void OnTargetMoveRight() {/*drone.turnRight();*/}
 			public void OnTargetMoveUp() {drone.moveUp();}
 			public void OnTargetMoveDown() {drone.moveDown();}
 			public void OnTargetMoveFar() {drone.moveForward();}
@@ -46,7 +46,7 @@ public class Tracking {
 			view.setTracking(true); // Change the message of screen to stop
 			grabber = (VideoStageGrabber) view.getRenderer();
 	
-			grabber.startGrabbing(15, new OnFrameCallback(){public void onFrame(Bitmap bmap) {
+			grabber.startGrabbing(30, new OnFrameCallback(){public void onFrame(Bitmap bmap) {
 				processor.Process(bmap);
 			}});
 			

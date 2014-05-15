@@ -170,4 +170,14 @@
         android:layout_centerHorizontal="true"
         android:text="Start Tracking" /-->
 
+    <Button
+        android:id="@+id/trackBtn"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/imageView10"
+        android:layout_alignParentBottom="true"
+        android:layout_alignTop="@+id/imageView5"
+        android:text="Track" />
+
 </RelativeLayout>

@@ -66,8 +66,16 @@ public abstract class ImageProcessor {
         //Color thresholds for defining the detection range
        // colorThreshold_1 = new Scalar(color1[0],color1[1],color1[2]);
        // colorThreshold_2 = new Scalar(color2[0],color2[1],color2[2]);
-        colorThreshold_1 = new Scalar(120,120,50);
-        colorThreshold_2 = new Scalar(180,255,255);
+     // colorThreshold_1 = new Scalar(120,120,50);
+        // colorThreshold_2 = new Scalar(180,255,255);
+      
+        //Detects the violet-red
+        // colorThreshold_1 = new Scalar(120,120,50);//rgb
+        // colorThreshold_2 = new Scalar(180,256,256);//brg
+        
+      //Detects the red color
+        colorThreshold_1 = new Scalar(78, 203,22); 
+        colorThreshold_2 = new Scalar(255, 255, 255);
         blurSize 		= new Size(3,3); 	//Used for gaussian blur
        
         //Points defined for line drawing
@@ -126,17 +134,23 @@ public abstract class ImageProcessor {
         String result1 = String.format("%.4f", directionX);
         String result2 = String.format("%.4f", directionY);
         
-        
-        
         CalculateDirection(directionX,directionY);
 	} 
 	
 	private void CalculateDirection(double posX, double posY){
 		int x = (int) (posX*1000);
 		int y = (int) (posY*1000);
-		Log.i("track", "Dir x and y: (" + x + ", " + y + ")");
+		Log.i("track", "x:" + x + ", y:" + y + ", area: "+area);
+		
+		//don't move if the color is not recognized 
+		if(posX == -1 && posY== -1)
+			return;
+		
+		if(Math.abs(x) > 600 && Math.abs(y) > 600)
+			return;
+		
 		if(Math.abs(x) > 300 || Math.abs(y) > 300){
-			if(Math.abs(x) > Math.abs(y)){
+			if(Math.abs(x) <= 600 && Math.abs(x) > Math.abs(y)){
 				if(x > 0){
 					// Go right
 					OnTargetMoveRight();
@@ -144,7 +158,7 @@ public abstract class ImageProcessor {
 					// Go left
 					OnTargetMoveLeft();
 				}
-			} else {
+			} else if(Math.abs(y) <= 600) {
 				if(y > 0){
 					//Go down
 					OnTargetMoveDown();
